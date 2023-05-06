@@ -150,7 +150,13 @@ class AutonomousAgent {
     let analysis: Analysis = { action: "reason", arg: "" };
 
     // If enabled, analyze what tool to use
-    if (useAgentStore.getState().isWebSearchEnabled) {
+    // if (useAgentStore.getState().isWebSearchEnabled) {
+    //   // Analyze how to execute a task: Reason, web search, other tools...
+    //   analysis = await this.analyzeTask(currentTask.value);
+    //   this.sendAnalysisMessage(analysis);
+    // }
+
+    if (true) {
       // Analyze how to execute a task: Reason, web search, other tools...
       analysis = await this.analyzeTask(currentTask.value);
       this.sendAnalysisMessage(analysis);
@@ -306,15 +312,26 @@ class AutonomousAgent {
 
   async executeTask(task: string, analysis: Analysis): Promise<string> {
     // Run search server side since clients won't have a key
-    if (this.shouldRunClientSide() && analysis.action !== "search") {
-      return await AgentService.executeTaskAgent(
-        this.modelSettings,
-        this.goal,
-        this.language,
-        task,
-        analysis
-      );
-    }
+    // if (this.shouldRunClientSide() && analysis.action !== "search") {
+    //   return await AgentService.executeTaskAgent(
+    //     this.modelSettings,
+    //     this.goal,
+    //     this.language,
+    //     task,
+    //     analysis
+    //   );
+    // }
+
+    // Unsure if need this
+    // if (analysis.action == "request") {
+    //   return await AgentService.executeTaskAgent(
+    //     this.modelSettings,
+    //     this.goal,
+    //     this.language,
+    //     task,
+    //     analysis
+    //   );
+    // }
 
     const data = {
       modelSettings: this.modelSettings,
@@ -411,8 +428,11 @@ class AutonomousAgent {
   sendAnalysisMessage(analysis: Analysis) {
     // Hack to send message with generic test. Should use a different type in the future
     let message = "🧠 Generating response...";
-    if (analysis.action == "search") {
-      message = `🌐 Searching the web for "${analysis.arg}"...`;
+    // if (analysis.action == "search") {
+    //   message = `🌐 Searching the web for "${analysis.arg}"...`;
+    // }
+    if (analysis.action == "request") {
+      message = `🌐 Making web request for "${analysis.arg}"...`;
     }
 
     this.sendMessage({

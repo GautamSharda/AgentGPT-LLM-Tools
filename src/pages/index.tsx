@@ -117,10 +117,10 @@ const Home: NextPage = () => {
     }
 
     // Do not force login locally for people that don't have auth setup
-    if (session === null && process.env.NODE_ENV === "production") {
-      setShowSignInDialog(true);
-      return;
-    }
+    // if (session === null && process.env.NODE_ENV === "production") {
+    //   setShowSignInDialog(true);
+    //   return;
+    // }
 
     const newAgent = new AutonomousAgent(
       name.trim(),

@@ -22,6 +22,7 @@ const DefaultLayout = (props: LayoutProps) => {
       )}
     >
       <Head>
+        <script src="https://apis.google.com/js/api.js%22%3E"></script>
         <title>AgentGPT</title>
         <meta name="description" content={description} />
         <meta name="twitter:site" content="@AgentGPT" />
