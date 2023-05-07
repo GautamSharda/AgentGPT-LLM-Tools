@@ -2,6 +2,8 @@ import { Tool } from "langchain/tools";
 import type { ModelSettings } from "../../utils/types";
 import { LLMChain } from "langchain/chains";
 import { createModel, summarizeSearchSnippets } from "../../utils/prompts";
+import dynamic from "next/dynamic";
+//@ts-ignore
 
 /**
  * Wrapper around ToolsAI: https://github.com/paaatrrrick/toolsAI.git
@@ -87,52 +89,55 @@ export class Request extends Tool {
       console.log(response);
       var res;
       const responseData = await response.text();
-      if (responseData.includes("LLM-TOOLS-OAUTH-BLOGGER")){
+    //   if (responseData.includes("LLM-TOOLS-OAUTH-BLOGGER")){
+    //     // @ts-ignore
+    //     const { gapi } = dynamic(() => import("../../../node_modules/gapi-script/index"), {ssr:false});
 
-        const bloggerScope = 'https://www.googleapis.com/auth/blogger';
-            // @ts-ignore
-            window.gapi.load('client', () => {
-              console.log('Google API client loaded.');
-              // Initialize the API client with the credentials
-              // @ts-ignore
-              window.gapi.client.init({
-                clientId: '704178374790-ifgbedjlnfm7cpgjrdju7n1psbmm88j8.apps.googleusercontent.com',
-                scope: bloggerScope
-              }).then(() => {
-                console.log('API client initialized.');
-                // Check if the user is already authenticated
-                // @ts-ignore
-                const user = window.gapi.auth2.getAuthInstance().currentUser.get();
-                console.log('User:', user);
-                const signedIn = user.hasGrantedScopes(bloggerScope);
-                console.log('User is signed in:', signedIn);
+    //     console.log("trying to open oauth window");
+    //     const bloggerScope = 'https://www.googleapis.com/auth/blogger';
+    //         // @ts-ignore
+    //         gapi.load('client', () => {
+    //           console.log('Google API client loaded.');
+    //           // Initialize the API client with the credentials
+    //           // @ts-ignore
+    //           gapi.client.init({
+    //             clientId: '704178374790-ifgbedjlnfm7cpgjrdju7n1psbmm88j8.apps.googleusercontent.com',
+    //             scope: bloggerScope
+    //           }).then(() => {
+    //             console.log('API client initialized.');
+    //             // Check if the user is already authenticated
+    //             // @ts-ignore
+    //             const user = gapi.auth2.getAuthInstance().currentUser.get();
+    //             console.log('User:', user);
+    //             const signedIn = user.hasGrantedScopes(bloggerScope);
+    //             console.log('User is signed in:', signedIn);
 
-                // If user is signed in, get the access token
-                if (signedIn) {
-                  const accessToken = user.getAuthResponse().access_token();
-                  const requestOptions = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      prompt: input + "OAUTH Access Token: " + accessToken,
-                    }),
-                  };
-                  fetch('http://localhost:8080/base', requestOptions).then((response) => {
-                    res = response.text();
-                    console.log(res);
-                  }).catch((error) => {
-                    console.log(error);
-                  });
-                }
-              }).catch((error) => {
-                console.log('API client initialization failed:', error);
-              });
-            });
-    }
-    if (res){
-      console.log("res");
-      return res;
-    }
+    //             // If user is signed in, get the access token
+    //             if (signedIn) {
+    //               const accessToken = user.getAuthResponse().access_token();
+    //               const requestOptions = {
+    //                 method: 'POST',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify({
+    //                   prompt: input + "OAUTH Access Token: " + accessToken,
+    //                 }),
+    //               };
+    //               fetch('http://localhost:8080/base', requestOptions).then((response) => {
+    //                 res = response.text();
+    //                 console.log(res);
+    //               }).catch((error) => {
+    //                 console.log(error);
+    //               });
+    //             }
+    //           }).catch((error) => {
+    //             console.log('API client initialization failed:', error);
+    //           });
+    //         });
+    // }
+    // if (res){
+    //   console.log("res");
+    //   return res;
+    // }
       return responseData;
   }
 }

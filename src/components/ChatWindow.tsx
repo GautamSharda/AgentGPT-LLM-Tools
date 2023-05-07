@@ -29,7 +29,11 @@ import { AnimatePresence } from "framer-motion";
 import { CgExport } from "react-icons/cg";
 import MarkdownRenderer from "./MarkdownRenderer";
 import { Switch } from "./Switch";
+// import { gapi } from "gapi-script";
+//@ts-ignore
 import { env } from "../env/client.mjs";
+import dynamic from "next/dynamic";
+
 
 interface ChatWindowProps extends HeaderProps {
   children?: ReactNode;
@@ -64,6 +68,8 @@ const ChatWindow = ({
   const isWebSearchEnabled = useAgentStore.use.isWebSearchEnabled();
   const setIsWebSearchEnabled = useAgentStore.use.setIsWebSearchEnabled();
 
+
+
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
 
@@ -71,6 +77,10 @@ const ChatWindow = ({
     const hasUserScrolled = scrollTop < scrollHeight - clientHeight - 10;
     setHasUserScrolled(hasUserScrolled);
   };
+
+  useEffect(() => {
+
+  }, []);
 
   useEffect(() => {
     // Scroll to bottom on re-renders
