@@ -86,9 +86,8 @@ export class Request extends Tool {
         }),
       };
       const response = await fetch('http://localhost:8080/base', requestOptions);
-      console.log(response);
-      var res;
       const responseData = await response.text();
+      console.log(responseData);
     //   if (responseData.includes("LLM-TOOLS-OAUTH-BLOGGER")){
     //     // @ts-ignore
     //     const { gapi } = dynamic(() => import("../../../node_modules/gapi-script/index"), {ssr:false});
