@@ -11,7 +11,7 @@ import { env } from "../env/client.mjs";
 import { LLMChain } from "langchain/chains";
 import { extractTasks } from "../utils/helpers";
 import { Serper } from "./custom-tools/serper";
-import {Request} from "./custom-tools/request";
+import { Request } from "./custom-tools/request";
 
 async function startGoalAgent(modelSettings: ModelSettings, goal: string, language: string) {
   const completion = await new LLMChain({
@@ -121,7 +121,7 @@ interface AgentService {
     modelSettings: ModelSettings,
     goal: string,
     language: string
-  ) => Promise<{newTasks: string[]}>;
+  ) => Promise<{ newTasks: string[] }>;
   analyzeTaskAgent: (modelSettings: ModelSettings, goal: string, task: string) => Promise<Analysis>;
   executeTaskAgent: (
     modelSettings: ModelSettings,
@@ -138,12 +138,13 @@ interface AgentService {
     lastTask: string,
     result: string,
     completedTasks: string[] | undefined
-  ) => Promise<{ newTasks: string[]}>;
+  ) => Promise<{ newTasks: string[] }>;
 }
 
 const OpenAIAgentService: AgentService = {
   startGoalAgent: startGoalAgent,
   analyzeTaskAgent: analyzeTaskAgent,
+  //@ts-ignore
   executeTaskAgent: executeTaskAgent,
   createTasksAgent: createTasksAgent,
 };
@@ -164,7 +165,7 @@ const MockAgentService: AgentService = {
     result: string,
     completedTasks: string[] | undefined
   ) => {
-    return await new Promise((resolve) => resolve({ newTasks: ["Task 4"]}));
+    return await new Promise((resolve) => resolve({ newTasks: ["Task 4"] }));
   },
 
   analyzeTaskAgent: async (modelSettings: ModelSettings, goal: string, task: string) => {

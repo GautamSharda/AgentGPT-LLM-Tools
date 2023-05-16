@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from "react";
+import { MESSAGE_TYPE_TASK, TASK_STATUS_STARTED } from "../types/agentTypes";
+import { v1 } from "uuid";
 import { useTranslation } from "next-i18next";
 import { type GetStaticProps, type NextPage } from "next";
 import Badge from "../components/Badge";
@@ -28,6 +30,8 @@ import nextI18NextConfig from "../../next-i18next.config.js";
 import { SorryDialog } from "../components/SorryDialog";
 import { SignInDialog } from "../components/SignInDialog";
 import { env } from "../env/client.mjs";
+// import { gapi } from 'gapi-script';
+
 
 const Home: NextPage = () => {
   const { i18n } = useTranslation();
@@ -60,60 +64,102 @@ const Home: NextPage = () => {
   const [token, setToken] = React.useState<string>("")
   console.log(token);
 
+
+
+  const OAuthCheck = () => {
+    console.log('clicked');
+    // console.log(tasks);
+    // setFlag(false);
+    // var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+    // // Parameters to pass to OAuth 2.0 endpoint.
+    // var params = {
+    //   'client_id': '406198750695-i6p3k9r380io0tlre38j8jsvv2o4vmk7.apps.googleusercontent.com',
+    //   'redirect_uri': 'http://localhost:3000',
+    //   'response_type': 'token',
+    //   'scope': 'https://www.googleapis.com/auth/blogger',
+    //   'include_granted_scopes': 'true',
+    //   'state': 'pass-through value'
+    // };
+
+    // // Create the OAuth URL
+    // var url = oauth2Endpoint + '?' + Object.keys(params).map(k => `${k}=${encodeURIComponent(params[k])}`).join('&');
+
+    // // Open the new window
+    // const newWin = window.open(url, "_blank");
+
+    // // Poll the new window's location for the access token
+    // var tokenCheckInterval = setInterval(() => {
+    //   try {
+    //     console.log('checking location');
+    //     //@ts-ignore
+    //     if (newWin.location.href.includes('access_token')) {
+    //       clearInterval(tokenCheckInterval);
+    //       //@ts-ignore
+    //       const newWinURI = newWin.location.href;
+    //       console.log(newWinURI);
+    //       setToken(newWinURI.substring(newWinURI.indexOf("access_token=") + 13, newWinURI.indexOf("&token_type")));
+    //       console.log(token);
+    //       //@ts-ignore
+    //       newWin.close();
+    //     }
+    //   } catch (e) {
+    //     console.log('bad location');
+    //   }
+    // }, 1000);
+  }
+
+
+  const updateWithOAuth = (jwtToken: string) => {
+    addMessage({
+      taskId: v1().toString(),
+      value: jwtToken,
+      status: TASK_STATUS_STARTED,
+      type: MESSAGE_TYPE_TASK,
+    });
+  }
+
   messages.forEach((message) => {
     console.log(message)
-    if (message.value.includes("OAuth" || "Oauth") && flag){
+    if (message.value.toUpperCase().includes("LLM-TOOLS-OAUTH-BLOGGER") && flag) {
       setFlag(false);
-      const newWin = window.open("", "_blank");
-      // @ts-ignore
-      newWin.onload = async function(){
-        //@ts-ignore
-        const newWinURI = newWin.location.href;
-        if (newWinURI.includes("access_token")){
-          setToken(newWinURI.substring(newWinURI.indexOf("access_token=")+13, newWinURI.indexOf("&token_type")));
+      var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+      // Parameters to pass to OAuth 2.0 endpoint.
+      var params = {
+        'client_id': '406198750695-i6p3k9r380io0tlre38j8jsvv2o4vmk7.apps.googleusercontent.com',
+        'redirect_uri': 'http://localhost:3000',
+        'response_type': 'token',
+        'scope': 'https://www.googleapis.com/auth/blogger',
+        'include_granted_scopes': 'true',
+        'state': 'pass-through value'
+      };
+
+      // Create the OAuth URL
+      var url = oauth2Endpoint + '?' + Object.keys(params).map(k => `${k}=${encodeURIComponent(params[k])}`).join('&');
+
+      // Open the new window
+      const newWin = window.open(url, "_blank");
+
+      // Poll the new window's location for the access token
+      var tokenCheckInterval = setInterval(() => {
+        try {
+          console.log('checking location');
           //@ts-ignore
-          console.log(token);
-          //@ts-ignore
-          newWin.close();
+          if (newWin.location.href.includes('access_token')) {
+            clearInterval(tokenCheckInterval);
+            //@ts-ignore
+            const newWinURI = newWin.location.href;
+            console.log(newWinURI);
+            setToken(newWinURI.substring(newWinURI.indexOf("access_token=") + 13, newWinURI.indexOf("&token_type")));
+            console.log(token);
+            //@ts-ignore
+            newWin.close();
+          }
+        } catch (e) {
+          console.log('bad location');
         }
-
-
-        // Google's OAuth 2.0 endpoint for requesting an access token
-        var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
-      
-        // Create <form> element to submit parameters to OAuth 2.0 endpoint.
-        //@ts-ignore
-        var form = newWin.document.createElement('form');
-        form.setAttribute('method', 'GET'); // Send as a GET request.
-        form.setAttribute('action', oauth2Endpoint);
-      
-        // Parameters to pass to OAuth 2.0 endpoint.
-        var params = {'client_id': '406198750695-i6p3k9r380io0tlre38j8jsvv2o4vmk7.apps.googleusercontent.com',
-                      'redirect_uri': 'http://localhost:3000',
-                      'response_type': 'token',
-                      'scope': 'https://www.googleapis.com/auth/blogger',
-                      'include_granted_scopes': 'true',
-                      'state': 'pass-through value'};
-      
-        // Add form parameters as hidden input values.
-        for (var p in params) {
-          //@ts-ignore
-          var input = newWin.document.createElement('input');
-          input.setAttribute('type', 'hidden');
-          input.setAttribute('name', p);
-          input.setAttribute('value', params[p]);
-          form.appendChild(input);
-        }
-        // Add form to page and submit it to open the OAuth 2.0 endpoint.
-        //@ts-ignore
-        newWin.document.body.appendChild(form);
-        form.submit();
-
-
-    }
-      // tasks.forEach((task) => {
-      //   task.value = task.value += `My OAuth token is: ${token}`;
-      // })
+      }, 1000);
     }
   });
 
@@ -290,6 +336,7 @@ const Home: NextPage = () => {
                     🚀
                   </Badge>
                 </PopIn>
+                <button onClick={OAuthCheck}>OAuth Click</button>
               </div>
               <div className="mt-1 text-center font-mono text-[0.7em] font-bold text-white">
                 <p>
@@ -323,13 +370,13 @@ const Home: NextPage = () => {
                 onSave={
                   shouldShowSave
                     ? (format) => {
-                        setHasSaved(true);
-                        agentUtils.saveAgent({
-                          goal: goalInput.trim(),
-                          name: nameInput.trim(),
-                          tasks: messages,
-                        });
-                      }
+                      setHasSaved(true);
+                      agentUtils.saveAgent({
+                        goal: goalInput.trim(),
+                        name: nameInput.trim(),
+                        tasks: messages,
+                      });
+                    }
                     : undefined
                 }
                 scrollToBottom
