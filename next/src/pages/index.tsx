@@ -56,6 +56,66 @@ const Home: NextPage = () => {
   const [showSignInDialog, setShowSignInDialog] = React.useState(false);
   const [hasSaved, setHasSaved] = React.useState(false);
   const agentUtils = useAgent();
+  const [flag, setFlag] = React.useState(true);
+  const [token, setToken] = React.useState<string>("")
+  console.log(token);
+
+  messages.forEach((message) => {
+    console.log(message)
+    if (message.value.includes("OAuth" || "Oauth") && flag){
+      setFlag(false);
+      const newWin = window.open("", "_blank");
+      // @ts-ignore
+      newWin.onload = async function(){
+        //@ts-ignore
+        const newWinURI = newWin.location.href;
+        if (newWinURI.includes("access_token")){
+          setToken(newWinURI.substring(newWinURI.indexOf("access_token=")+13, newWinURI.indexOf("&token_type")));
+          //@ts-ignore
+          console.log(token);
+          //@ts-ignore
+          newWin.close();
+        }
+
+
+        // Google's OAuth 2.0 endpoint for requesting an access token
+        var oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
+      
+        // Create <form> element to submit parameters to OAuth 2.0 endpoint.
+        //@ts-ignore
+        var form = newWin.document.createElement('form');
+        form.setAttribute('method', 'GET'); // Send as a GET request.
+        form.setAttribute('action', oauth2Endpoint);
+      
+        // Parameters to pass to OAuth 2.0 endpoint.
+        var params = {'client_id': '406198750695-i6p3k9r380io0tlre38j8jsvv2o4vmk7.apps.googleusercontent.com',
+                      'redirect_uri': 'http://localhost:3000',
+                      'response_type': 'token',
+                      'scope': 'https://www.googleapis.com/auth/blogger',
+                      'include_granted_scopes': 'true',
+                      'state': 'pass-through value'};
+      
+        // Add form parameters as hidden input values.
+        for (var p in params) {
+          //@ts-ignore
+          var input = newWin.document.createElement('input');
+          input.setAttribute('type', 'hidden');
+          input.setAttribute('name', p);
+          input.setAttribute('value', params[p]);
+          form.appendChild(input);
+        }
+        // Add form to page and submit it to open the OAuth 2.0 endpoint.
+        //@ts-ignore
+        newWin.document.body.appendChild(form);
+        form.submit();
+
+
+    }
+      // tasks.forEach((task) => {
+      //   task.value = task.value += `My OAuth token is: ${token}`;
+      // })
+    }
+  });
 
   useEffect(() => {
     const key = "agentgpt-modal-opened-v0.2";

@@ -6,6 +6,7 @@ import {
   startGoalPrompt,
 } from "../utils/prompts";
 import type { ModelSettings } from "../utils/types";
+// @ts-ignore
 import { env } from "../env/client.mjs";
 import { LLMChain } from "langchain/chains";
 import { extractTasks } from "../utils/helpers";
