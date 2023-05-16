@@ -10,6 +10,7 @@ import { env } from "../env/client.mjs";
 import { LLMChain } from "langchain/chains";
 import { extractTasks } from "../utils/helpers";
 import { Serper } from "./custom-tools/serper";
+import {Request} from "./custom-tools/request";
 
 async function startGoalAgent(modelSettings: ModelSettings, goal: string, language: string) {
   const completion = await new LLMChain({
@@ -25,7 +26,7 @@ async function startGoalAgent(modelSettings: ModelSettings, goal: string, langua
 }
 
 async function analyzeTaskAgent(modelSettings: ModelSettings, goal: string, task: string) {
-  const actions = ["reason", "search"];
+  const actions = ["reason", "request"];
   const completion = await new LLMChain({
     llm: createModel(modelSettings),
     prompt: analyzeTaskPrompt,
@@ -46,7 +47,7 @@ async function analyzeTaskAgent(modelSettings: ModelSettings, goal: string, task
 }
 
 export type Analysis = {
-  action: "reason" | "search" | "wikipedia" | "image";
+  action: "reason" | "request" | "wikipedia" | "image";
   arg: string;
 };
 
@@ -62,9 +63,13 @@ async function executeTaskAgent(
   task: string,
   analysis: Analysis
 ) {
-  if (analysis.action == "search" && process.env.SERP_API_KEY) {
-    return {response: await new Serper(modelSettings, goal)._call(analysis.arg)};
+  // if (analysis.action == "search" && process.env.SERP_API_KEY) {
+  //   return {response: await new Serper(modelSettings, goal)._call(analysis.arg)};
+  // }
+  if (analysis.action == "request") {
+    return await new Request(modelSettings, goal)._call(analysis.arg);
   }
+
 
   const completion = await new LLMChain({
     llm: createModel(modelSettings),
@@ -75,12 +80,12 @@ async function executeTaskAgent(
     task,
   });
 
-  // For local development when no SERP API Key provided
-  if (analysis.action == "search" && !process.env.SERP_API_KEY) {
-    return {response: `\`ERROR: Failed to search as no SERP_API_KEY is provided in ENV.\` \n\n${
-      completion.text as string
-    }`};
-  }
+  // // For local development when no SERP API Key provided
+  // if (analysis.action == "search" && !process.env.SERP_API_KEY) {
+  //   return {response: `\`ERROR: Failed to search as no SERP_API_KEY is provided in ENV.\` \n\n${
+  //     completion.text as string
+  //   }`};
+  // }
 
   return { response: completion.text as string };
 }

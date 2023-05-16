@@ -138,11 +138,17 @@ class AutonomousAgent {
     let analysis: Analysis = { action: "reason", arg: "" };
 
     // If enabled, analyze what tool to use
-    if (useAgentStore.getState().isWebSearchEnabled) {
-      // Analyze how to execute a task: Reason, web search, other tools...
-      analysis = await this.analyzeTask(currentTask.value);
-      this.sendAnalysisMessage(analysis);
+    // if (useAgentStore.getState().isWebSearchEnabled) {
+    //   // Analyze how to execute a task: Reason, web search, other tools...
+    //   analysis = await this.analyzeTask(currentTask.value);
+    //   this.sendAnalysisMessage(analysis);
+    // }
+    if (true) {
+        // Analyze how to execute a task: Reason, web search, other tools...
+        analysis = await this.analyzeTask(currentTask.value);
+        this.sendAnalysisMessage(analysis);
     }
+
 
     const result = await this.executeTask(currentTask.value, analysis);
     this.sendMessage({
@@ -318,9 +324,13 @@ class AutonomousAgent {
   sendAnalysisMessage(analysis: Analysis) {
     // Hack to send message with generic test. Should use a different type in the future
     let message = "⏰ Generating response...";
-    if (analysis.action == "search") {
-      message = `🔍 Searching the web for "${analysis.arg}"...`;
+    // if (analysis.action == "search") {
+    //   message = `🔍 Searching the web for "${analysis.arg}"...`;
+    // }
+    if (analysis.action == "request") {
+      message = `🌐 Making web request for "${analysis.arg}"...`;
     }
+
     if (analysis.action == "wikipedia") {
       message = `🌐 Searching Wikipedia for "${analysis.arg}"...`;
     }
