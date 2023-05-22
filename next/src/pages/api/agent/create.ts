@@ -29,7 +29,8 @@ const handler = async (request: NextRequest) => {
         completedTasks
       )
     );
-
+    console.log("nt:");
+    console.log(newTasks);
     return NextResponse.json(newTasks);
   } catch (e) {}
 

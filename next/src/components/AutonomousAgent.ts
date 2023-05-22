@@ -166,6 +166,7 @@ class AutonomousAgent {
     // Add new tasks
     try {
       const newTasks = await this.getAdditionalTasks(currentTask.value, result);
+      console.log(newTasks);
       for (const value of newTasks) {
         await new Promise((r) => setTimeout(r, TIMOUT_SHORT));
         const task: Task = {
@@ -181,7 +182,7 @@ class AutonomousAgent {
         this.sendMessage({ ...currentTask, status: TASK_STATUS_FINAL });
       }
     } catch (e) {
-      console.log(e);
+      console.log("wef:" + e);
       this.sendErrorMessage(translate("ERROR_ADDING_ADDITIONAL_TASKS", "errors"));
 
       this.sendMessage({ ...currentTask, status: TASK_STATUS_FINAL });
@@ -289,6 +290,9 @@ class AutonomousAgent {
 
   sendMessage(message: Message) {
     if (this.isRunning) {
+      const addMessage = useMessageStore.use.addMessage();
+      //@ts-ignore
+      addMessage({type:"thinking", value: message});
       this.renderMessage(message);
     }
   }

@@ -68,7 +68,7 @@ async function executeTaskAgent(
   //   return {response: await new Serper(modelSettings, goal)._call(analysis.arg)};
   // }
   if (analysis.action == "request") {
-    return await new Request(modelSettings, goal)._call(analysis.arg);
+    return {repsonse: await new Request(modelSettings, goal)._call(analysis.arg)};
   }
 
 

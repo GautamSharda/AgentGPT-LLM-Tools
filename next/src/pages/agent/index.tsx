@@ -46,7 +46,7 @@ const AgentPage: NextPage = () => {
       centered
     >
       <ChatWindow
-        messages={messages.filter((m) => m.type !== "thinking")}
+        messages={messages.filter((m) => m.type !== "changed_for_testing")}
         title={getAgent?.data?.name}
         className="min-h-[80vh] md:w-[80%]"
         fullscreen
