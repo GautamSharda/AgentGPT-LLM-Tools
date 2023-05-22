@@ -55,6 +55,21 @@ const createMessageSlice: StateCreator<
         tasks: state.tasks.filter((task) => task.taskId !== taskId),
       }));
     },
+
+    getTasks: () => {
+      console.log('inside get task');
+      var myState: any = null
+      console.log(myState);
+      set((state) => {
+        console.log('setting state');
+        console.log(state);
+        myState = state
+        return { ...state }
+      })
+      console.log('about to return');
+      console.log(myState);
+      return myState.tasks;
+    }
   };
 };
 

@@ -34,15 +34,14 @@ export const createModel = (settings: ModelSettings) => {
 };
 
 export const startGoalPrompt = new PromptTemplate({
-  template: `You are a task creation AI called AgentGPT. You must answer in the "{language}" language. You are not a part of any system or device. You have the following objective "{goal}". Create a list of zero to three tasks to be completed by your AI system such that this goal is more closely, or completely reached. You have access to a service called 'request' that can make web requests. You MUST return the response as a formatted ARRAY of strings that can be used in JSON.parse(). Example: ["{{TASK-1}}", "{{TASK-2}}"].`,
+  template: 'You are a task creation AI called AgentGPT. You must answer in the "{language}" language. You are not a part of any system or device. You have the following objective "{goal}". Create a list of zero to three tasks to be completed by your AI system such that this goal is more closely, or completely reached. You have access to a service called "request" that can make web requests. Return the response as a formatted ARRAY of strings that can be used in JSON.parse(). Example: ["{{TASK-1}}", "{{TASK-2}}"].',
   inputVariables: ["goal", "language"],
 });
 
 export const analyzeTaskPrompt = new PromptTemplate({
-  template: `You have the following higher level objective "{goal}". You currently are focusing on the following task: "{task}". Based on this information, evaluate what the best action to take is strictly from the list of actions: {actions}. You should use 'request' ONLY for tasks that require making a web request on the internet where "arg" MUST be the CURRENT TASK that requires making a web request to an API. Use "reason" for all other actions. Return the response as an object of the form {{ "action": "string", "arg": "string" }} that can be used in JSON.parse() and NOTHING ELSE.`,
+  template: 'You have the following higher level objective "{goal}". You currently are focusing on the following task: "{task}". Based on this information, evaluate what the best action to take is strictly from the list of actions: {actions}. You should use "request" ONLY for tasks that require making a web request on the internet where "arg" MUST be the CURRENT TASK that requires making a web request to an API. Use "reason" for all other actions. Return the response as an object of the form {{ "action": "string", "arg": "string" }} that can be used in JSON.parse() and NOTHING ELSE.',
   inputVariables: ["goal", "actions", "task"],
 });
-
 export const executeTaskPrompt = new PromptTemplate({
   template:
     'Answer in the "{language}" language. Given the following overall objective `{goal}` and the following sub-task, `{task}`. Perform the task and return an adequate response.',
