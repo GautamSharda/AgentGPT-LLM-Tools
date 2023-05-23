@@ -26,16 +26,6 @@ const handler = async (request: NextRequest) => {
         analysis || DefaultAnalysis
       )
     );
-    console.log('in execute tasks');
-    try {
-      //@ts-ignore
-      if (response?.repsonse?.testType) {
-        return response;
-      }
-    } catch (e) {
-      console.log('oops error');
-      console.log(e)
-    }
     const datat2 = NextResponse.json(response);
     console.log(datat2);
     console.log('done in execute tasks');

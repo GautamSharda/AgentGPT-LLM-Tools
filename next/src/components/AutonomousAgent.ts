@@ -154,12 +154,11 @@ class AutonomousAgent {
     const result = await this.executeTask(currentTask.value, analysis);
     console.log('we got it back in agent');
     console.log(result);
-    if (result?.testType === 'important') {
+    if (result.includes("LLM-TOOLS-OAUTH-BLOGGER")) {
       this.sendMessage({
-        value: result.data,
-        info: result.data,
+        value: result,
+        info: result,
         status: TASK_STATUS_COMPLETED,
-        taskId: v1().toString(),
       });
     } else {
       this.sendMessage({
@@ -272,6 +271,12 @@ class AutonomousAgent {
 
   private async post<T>(url: any, data: any) {
     try {
+      console.log('at post 1');
+      // const data = (await axios.post(url, data)).data as T;
+      // console.log(
+      //   'at post 2'
+      // );
+      // console.log(data);
       const call = await axios.post(url, data);
       console.log('we are back in post');
       console.log(call);
@@ -282,6 +287,7 @@ class AutonomousAgent {
         console.log('second');
         return call;
       }
+
     } catch (e) {
       this.shutdown();
 

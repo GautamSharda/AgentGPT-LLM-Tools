@@ -12,6 +12,7 @@ import { LLMChain } from "langchain/chains";
 import { extractTasks } from "../utils/helpers";
 import { Serper } from "./custom-tools/serper";
 import { Request } from "./custom-tools/request";
+import { type } from "os";
 
 async function startGoalAgent(modelSettings: ModelSettings, goal: string, language: string) {
   const completion = await new LLMChain({
@@ -70,8 +71,12 @@ async function executeTaskAgent(
   if (analysis.action == "request") {
     // return await new Request(modelSettings, goal)._call(analysis.arg);
     console.log('at requests bitch');
-    const d1 = await new Request(modelSettings, goal)._call(analysis.arg)
-    const data = { repsonse: { data: d1, testType: 'important' } };
+    var d1 = await new Request(modelSettings, goal)._call(analysis.arg)
+    console.log(d1);
+    if (typeof d1 !== "string") {
+      d1 = d1['data']
+    }
+    const data = { response: d1 };
     console.log('data is backl');
     console.log(data);
     return data
