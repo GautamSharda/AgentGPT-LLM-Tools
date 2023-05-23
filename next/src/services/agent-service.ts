@@ -68,7 +68,13 @@ async function executeTaskAgent(
   //   return {response: await new Serper(modelSettings, goal)._call(analysis.arg)};
   // }
   if (analysis.action == "request") {
-    return {repsonse: await new Request(modelSettings, goal)._call(analysis.arg)};
+    // return await new Request(modelSettings, goal)._call(analysis.arg);
+    console.log('at requests bitch');
+    const d1 = await new Request(modelSettings, goal)._call(analysis.arg)
+    const data = { repsonse: { data: d1, testType: 'important' } };
+    console.log('data is backl');
+    console.log(data);
+    return data
   }
 
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from "axios";
 import type { ModelSettings } from "../utils/types";
 import type { Analysis } from "../services/agent-service";
@@ -144,19 +145,29 @@ class AutonomousAgent {
     //   this.sendAnalysisMessage(analysis);
     // }
     if (true) {
-        // Analyze how to execute a task: Reason, web search, other tools...
-        analysis = await this.analyzeTask(currentTask.value);
-        this.sendAnalysisMessage(analysis);
+      // Analyze how to execute a task: Reason, web search, other tools...
+      analysis = await this.analyzeTask(currentTask.value);
+      this.sendAnalysisMessage(analysis);
     }
 
-
+    console.log('about to call execture takss from agenty')
     const result = await this.executeTask(currentTask.value, analysis);
-    this.sendMessage({
-      ...currentTask,
-      info: result,
-      status: TASK_STATUS_COMPLETED,
-    });
-
+    console.log('we got it back in agent');
+    console.log(result);
+    if (result?.testType === 'important') {
+      this.sendMessage({
+        value: result.data,
+        info: result.data,
+        status: TASK_STATUS_COMPLETED,
+        taskId: v1().toString(),
+      });
+    } else {
+      this.sendMessage({
+        ...currentTask,
+        info: result,
+        status: TASK_STATUS_COMPLETED,
+      });
+    }
     this.completedTasks.push(currentTask.value || "");
 
     // Wait before adding tasks
@@ -166,7 +177,7 @@ class AutonomousAgent {
     // Add new tasks
     try {
       const newTasks = await this.getAdditionalTasks(currentTask.value, result);
-      console.log(newTasks);
+      // console.log(newTasks);
       for (const value of newTasks) {
         await new Promise((r) => setTimeout(r, TIMOUT_SHORT));
         const task: Task = {
@@ -182,7 +193,7 @@ class AutonomousAgent {
         this.sendMessage({ ...currentTask, status: TASK_STATUS_FINAL });
       }
     } catch (e) {
-      console.log("wef:" + e);
+      // console.log("wef:" + e);
       this.sendErrorMessage(translate("ERROR_ADDING_ADDITIONAL_TASKS", "errors"));
 
       this.sendMessage({ ...currentTask, status: TASK_STATUS_FINAL });
@@ -247,9 +258,9 @@ class AutonomousAgent {
     });
   }
 
-  async executeTask(task: string, analysis: Analysis): Promise<string> {
+  async executeTask(task: any, analysis: any): Promise<any> {
     return (
-      await this.post<{ response: string }>("/api/agent/execute", {
+      await this.post<{ response: any }>("/api/agent/execute", {
         modelSettings: this.modelSettings,
         goal: this.goal,
         language: this.language,
@@ -259,9 +270,18 @@ class AutonomousAgent {
     ).response;
   }
 
-  private async post<T>(url: string, data: RequestBody) {
+  private async post<T>(url: any, data: any) {
     try {
-      return (await axios.post(url, data)).data as T;
+      const call = await axios.post(url, data);
+      console.log('we are back in post');
+      console.log(call);
+      if (call.data) {
+        console.log('first ');
+        return call.data;
+      } else {
+        console.log('second');
+        return call;
+      }
     } catch (e) {
       this.shutdown();
 
@@ -290,9 +310,8 @@ class AutonomousAgent {
 
   sendMessage(message: Message) {
     if (this.isRunning) {
-      const addMessage = useMessageStore.use.addMessage();
-      //@ts-ignore
-      addMessage({type:"thinking", value: message});
+      // const addMessage = useMessageStore.use.addMessage();
+      // addMessage({ type: "thinking", value: message.value });
       this.renderMessage(message);
     }
   }
